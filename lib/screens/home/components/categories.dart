@@ -15,15 +15,22 @@ class Categories extends StatelessWidget {
     ];
     return Padding(
       padding: EdgeInsets.all(getProportionateScreenWidth(20)),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: List.generate(
-          categories.length,
-          (index) => CategoryCard(
-            icon: categories[index]["icon"],
-            text: categories[index]["text"],
-            press: () {},
+      child: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        scrollDirection: Axis.horizontal,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: List.generate(
+            categories.length,
+            (index) => Padding(
+              padding: const EdgeInsets.only(left: 10.0, right: 10.0),
+              child: CategoryCard(
+                icon: categories[index]["icon"],
+                text: categories[index]["text"],
+                press: () {},
+              ),
+            ),
           ),
         ),
       ),
