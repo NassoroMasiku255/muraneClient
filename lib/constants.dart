@@ -48,3 +48,6 @@ OutlineInputBorder outlineInputBorder() {
     borderSide: BorderSide(color: kTextColor),
   );
 }
+
+// url
+const String base_url = "http://192.168.83.208:9091";
