@@ -89,13 +89,27 @@ ProductList({super.key, required this.product});
       child:SingleChildScrollView(
            physics: const BouncingScrollPhysics(),
           // scrollDirection: Axis.horizontal,
-          child: Column(
+          child: Row(
             children: [
-              ...List.generate(
-                product.length,
-                (index) => ListCard(product: product[index]),
+              Column(
+                children: [
+                  ...List.generate(
+                    product.length,
+                    (index) => ListCard(product: product[index]),
+                  ),
+                  SizedBox(width: getProportionateScreenWidth(20)),
+                ],
               ),
-              SizedBox(width: getProportionateScreenWidth(20)),
+              const SizedBox(width: 10),
+               Column(
+                children: [
+                  ...List.generate(
+                    product.length,
+                    (index) => ListCard(product: product[index]),
+                  ),
+                  SizedBox(width: getProportionateScreenWidth(20)),
+                ],
+              ),
             ],
           ),
         ),

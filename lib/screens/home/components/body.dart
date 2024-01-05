@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/screens/home/components/section_title.dart';
 import '../../../constants.dart';
 import '../../../models/Product.dart';
 import '../../../size_config.dart';
@@ -82,6 +83,8 @@ class _BodyState extends State<Body> {
                   Categories(),
                   SpecialOffers(),
                   SizedBox(height: getProportionateScreenWidth(30)),
+                  SectionTitle(title: "For you", press: () => {},),
+                  SizedBox(height: getProportionateScreenWidth(10)),
                   ProductList(product: products)
                 ],
               ),

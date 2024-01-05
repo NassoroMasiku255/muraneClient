@@ -9,7 +9,7 @@ import '../size_config.dart';
 class ListCard extends StatelessWidget {
   const ListCard({
     Key? key,
-    this.width = 340,
+    this.width = 180,
     this.aspectRetio = 1.02,
     required this.product,
   }) : super(key: key);
