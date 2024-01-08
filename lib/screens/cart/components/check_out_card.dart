@@ -1,17 +1,33 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
 import 'package:shop_app/components/default_button.dart';
-
+import 'package:shop_app/provider/cart.dart';
+import 'package:http/http.dart' as http;
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
-class CheckoutCard extends StatelessWidget {
-  const CheckoutCard({
-    Key? key,
-  }) : super(key: key);
+// class CheckoutCard extends StatelessWidget {
+//   const CheckoutCard({
+//     Key? key,
+//   }) : super(key: key);
+
+// }
+
+class CheckoutCard extends StatefulWidget {
+  const CheckoutCard({super.key});
 
   @override
+  State<CheckoutCard> createState() => _CheckoutCardState();
+}
+
+class _CheckoutCardState extends State<CheckoutCard> {
+  bool loading = false;
+  @override
   Widget build(BuildContext context) {
+    List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: getProportionateScreenWidth(15),
@@ -67,10 +83,10 @@ class CheckoutCard extends StatelessWidget {
                   TextSpan(
                     text: "Total:\n",
                     children: [
-                      TextSpan(
-                        text: "\$337.15",
-                        style: TextStyle(fontSize: 16, color: Colors.black),
-                      ),
+                      // TextSpan(
+                      //   text: "\Tzs${getTotalPrice(cartitems)}",
+                      //   style: TextStyle(fontSize: 16, color: Colors.black),
+                      // ),
                     ],
                   ),
                 ),
@@ -78,7 +94,7 @@ class CheckoutCard extends StatelessWidget {
                   width: getProportionateScreenWidth(190),
                   child: DefaultButton(
                     text: "Check Out",
-                    press: () {},
+                    press: () => saveOrder(context),
                   ),
                 ),
               ],
@@ -87,5 +103,71 @@ class CheckoutCard extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  // getTotalPrice(cartItems) {
+  //   final total = cartItems.fold( 
+  //       0, (sum, item) => sum + (int.parse(item["price"]) * int.parse(item["quantity"])));
+  //   return total.toString();
+  // }
+
+  saveOrder(BuildContext context) {
+    List cartitems = Provider.of<Cart>(context, listen: false).cartItem;
+    print(cartitems);
+    Uri apiUrl = Uri.parse("$base_url/save_order");
+    try {
+      setState(() {
+        loading = true;
+      });
+      http
+          .post(apiUrl,
+              headers: {"Content-Type": "application/json"},
+              body: jsonEncode({
+                "cart": cartitems
+              }))
+          .then((response) {
+        var res = jsonDecode(response.body);
+        if (res["code"] == 200) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(res["message"]),
+          ));
+          setState(() {
+            loading = false;
+          });
+        } else if (res["code"] == "201") {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(res["message"]),
+            backgroundColor: Colors.red,
+          ));
+          setState(() {
+            loading = false;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(res["message"]),
+            backgroundColor: Colors.red,
+          ));
+          setState(() {
+            loading = false;
+          });
+        }
+      });
+    } catch (e) {
+      print("here is error : $e");
+      ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+        content: Text('Error occoured'),
+        backgroundColor: Colors.red,
+      ));
+      setState(() {
+        loading = false;
+      });
+    }
+    Provider.of<Cart>(context, listen: false).clearCartItem();
+    Provider.of<Cart>(context, listen: false).changeQuantiry(1);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+      content: Text("successful Order sent"),
+      backgroundColor: Colors.green,
+    ));
+    Navigator.pop(context);
   }
 }

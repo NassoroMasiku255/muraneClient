@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
-import 'package:shop_app/models/Cart.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/provider/cart.dart';
+// import 'package:shop_app/models/Cart.dart';
 
 import '../../../size_config.dart';
 import 'cart_card.dart';
@@ -13,19 +15,20 @@ class Body extends StatefulWidget {
 class _BodyState extends State<Body> {
   @override
   Widget build(BuildContext context) {
+     List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     return Padding(
       padding:
           EdgeInsets.symmetric(horizontal: getProportionateScreenWidth(20)),
       child: ListView.builder(
-        itemCount: demoCarts.length,
+        itemCount: cartitems.length,
         itemBuilder: (context, index) => Padding(
           padding: EdgeInsets.symmetric(vertical: 10),
           child: Dismissible(
-            key: Key(demoCarts[index].product.id.toString()),
+            key: Key(cartitems[index]["invid"].toString()),
             direction: DismissDirection.endToStart,
             onDismissed: (direction) {
               setState(() {
-                demoCarts.removeAt(index);
+                cartitems.removeAt(index);
               });
             },
             background: Container(
@@ -41,7 +44,7 @@ class _BodyState extends State<Body> {
                 ],
               ),
             ),
-            child: CartCard(cart: demoCarts[index]),
+            child: CartCard(product: cartitems[index]),
           ),
         ),
       ),

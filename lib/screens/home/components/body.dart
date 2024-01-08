@@ -21,9 +21,13 @@ class Body extends StatefulWidget {
 
 class _BodyState extends State<Body> {
   List<Product> products = [];
+  bool loadingData = false;
 
   Future<void> _loadProducts() async {
     Uri apiUrl = Uri.parse("$base_url/getAllItems");
+    setState(() {
+      loadingData = true;
+    });
     try {
       var response = await http.get(
         apiUrl,
@@ -49,6 +53,7 @@ class _BodyState extends State<Body> {
             rating: 4.1,
             // isFavourite: true,
           ));
+          loadingData = false;
         });
       }
     } catch (e) {
@@ -57,6 +62,9 @@ class _BodyState extends State<Body> {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
         content: Text('No product found'),
       ));
+      setState(() {
+        loadingData = false;
+      });
     }
   }
 
@@ -85,7 +93,9 @@ class _BodyState extends State<Body> {
                   SizedBox(height: getProportionateScreenWidth(30)),
                   SectionTitle(title: "For you", press: () => {},),
                   SizedBox(height: getProportionateScreenWidth(10)),
-                  ProductList(product: products)
+                  loadingData ? SizedBox(
+                    child: CircularProgressIndicator(),
+                  ): ProductList(product: products)
                 ],
               ),
             ),

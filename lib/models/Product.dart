@@ -7,6 +7,7 @@ class Product {
   final List<Color> colors;
   final double rating, price;
   final bool isFavourite, isPopular;
+  
 
   Product({
     required this.id,

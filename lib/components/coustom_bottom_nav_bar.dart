@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:provider/provider.dart';
+import 'package:shop_app/provider/cart.dart';
 import 'package:shop_app/screens/home/home_screen.dart';
 import 'package:shop_app/screens/profile/profile_screen.dart';
-import 'package:shop_app/screens/sign_in/sign_in_screen.dart';
 
 import '../constants.dart';
 import '../enums.dart';
@@ -18,6 +19,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     final Color inActiveIconColor = Color(0xFFB6B6B6);
     return Container(
       padding: EdgeInsets.symmetric(vertical: 14),
@@ -56,8 +58,11 @@ class CustomBottomNavBar extends StatelessWidget {
               ),
               IconButton(
                 icon: SvgPicture.asset("assets/icons/Cart Icon.svg"),
-                onPressed: () => (false)
-                    ? Navigator.pushNamed(context, SignInScreen.routeName)
+                onPressed: () => (cartitems.isEmpty)
+                    ? ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
+                        content: Text('No product found'),
+                        backgroundColor: Colors.red,
+                      ))
                     : Navigator.pushNamed(context, CartScreen.routeName),
               ),
               IconButton(
