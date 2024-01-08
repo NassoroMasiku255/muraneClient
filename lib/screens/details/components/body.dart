@@ -109,7 +109,6 @@ class _BodyState extends State<Body> {
     int? qty = Provider.of<Cart>(context, listen: false).quantity;
     Provider.of<Cart>(context, listen: false).addCartItem({
       "invid": product["inventory"]["id"].toString(),
-      "custId":"1",
       "name": product["name"],
       "price": product["inventory"]["amount"].toString(),
       "shopId": product["shopId"].toString(),

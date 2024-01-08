@@ -27,7 +27,7 @@ class _CheckoutCardState extends State<CheckoutCard> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
+    // List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: getProportionateScreenWidth(15),
@@ -123,7 +123,8 @@ class _CheckoutCardState extends State<CheckoutCard> {
           .post(apiUrl,
               headers: {"Content-Type": "application/json"},
               body: jsonEncode({
-                "cart": cartitems
+                "custIt":"1",
+                "cart": cartitems,
               }))
           .then((response) {
         var res = jsonDecode(response.body);
