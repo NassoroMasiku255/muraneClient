@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
+import 'package:shop_app/models/User.dart';
 import 'package:shop_app/provider/cart.dart';
+import 'package:shop_app/provider/user.dart';
 import 'package:shop_app/screens/home/home_screen.dart';
 import 'package:shop_app/screens/profile/profile_screen.dart';
+import 'package:shop_app/screens/sign_in/sign_in_screen.dart';
 
 import '../constants.dart';
 import '../enums.dart';
@@ -19,6 +22,7 @@ class CustomBottomNavBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    User? user = Provider.of<UserData>(context, listen: true).user;
     List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     final Color inActiveIconColor = Color(0xFFB6B6B6);
     return Container(
@@ -63,7 +67,9 @@ class CustomBottomNavBar extends StatelessWidget {
                         content: Text('No product found'),
                         backgroundColor: Colors.red,
                       ))
-                    : Navigator.pushNamed(context, CartScreen.routeName),
+                    : (user?.id != null)
+                    ?Navigator.pushNamed(context, CartScreen.routeName)
+                    :Navigator.pushNamed(context, SignInScreen.routeName),
               ),
               IconButton(
                 icon: SvgPicture.asset(

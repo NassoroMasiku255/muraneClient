@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:provider/provider.dart';
 import 'package:shop_app/components/default_button.dart';
+import 'package:shop_app/models/User.dart';
 import 'package:shop_app/provider/cart.dart';
 import 'package:http/http.dart' as http;
+import 'package:shop_app/provider/user.dart';
 import '../../../constants.dart';
 import '../../../size_config.dart';
 
@@ -27,7 +29,7 @@ class _CheckoutCardState extends State<CheckoutCard> {
   bool loading = false;
   @override
   Widget build(BuildContext context) {
-    // List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
+    List cartitems = Provider.of<Cart>(context, listen: true).cartItem;
     return Container(
       padding: EdgeInsets.symmetric(
         vertical: getProportionateScreenWidth(15),
@@ -83,10 +85,10 @@ class _CheckoutCardState extends State<CheckoutCard> {
                   TextSpan(
                     text: "Total:\n",
                     children: [
-                      // TextSpan(
-                      //   text: "\Tzs${getTotalPrice(cartitems)}",
-                      //   style: TextStyle(fontSize: 16, color: Colors.black),
-                      // ),
+                      TextSpan(
+                        text: "\Tzs${getTotalPrice(cartitems)}",
+                        style: TextStyle(fontSize: 16, color: Colors.black),
+                      ),
                     ],
                   ),
                 ),
@@ -105,14 +107,15 @@ class _CheckoutCardState extends State<CheckoutCard> {
     );
   }
 
-  // getTotalPrice(cartItems) {
-  //   final total = cartItems.fold( 
-  //       0, (sum, item) => sum + (int.parse(item["price"]) * int.parse(item["quantity"])));
-  //   return total.toString();
-  // }
+  getTotalPrice(cartItems) {
+    final total = cartItems.fold(
+        0, (sum, item) => sum + (double.parse(item["price"]) * int.parse(item["quantity"])));
+    return total.toString();
+  }
 
   saveOrder(BuildContext context) {
     List cartitems = Provider.of<Cart>(context, listen: false).cartItem;
+    User? user = Provider.of<UserData>(context, listen: false).user;
     print(cartitems);
     Uri apiUrl = Uri.parse("$base_url/save_order");
     try {
@@ -123,7 +126,7 @@ class _CheckoutCardState extends State<CheckoutCard> {
           .post(apiUrl,
               headers: {"Content-Type": "application/json"},
               body: jsonEncode({
-                "custIt":"1",
+                "custId": "${user!.id}",
                 "cart": cartitems,
               }))
           .then((response) {
@@ -131,7 +134,11 @@ class _CheckoutCardState extends State<CheckoutCard> {
         if (res["code"] == 200) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(res["message"]),
+            backgroundColor: Colors.green,
           ));
+          Provider.of<Cart>(context, listen: false).clearCartItem();
+          Provider.of<Cart>(context, listen: false).changeQuantiry(1);
+          Navigator.pop(context);
           setState(() {
             loading = false;
           });
@@ -163,12 +170,5 @@ class _CheckoutCardState extends State<CheckoutCard> {
         loading = false;
       });
     }
-    Provider.of<Cart>(context, listen: false).clearCartItem();
-    Provider.of<Cart>(context, listen: false).changeQuantiry(1);
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text("successful Order sent"),
-      backgroundColor: Colors.green,
-    ));
-    Navigator.pop(context);
   }
 }
