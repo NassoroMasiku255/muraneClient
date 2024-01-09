@@ -77,7 +77,7 @@ class _SignFormState extends State<SignForm> {
           FormError(errors: errors),
           SizedBox(height: getProportionateScreenHeight(20)),
           DefaultButton(
-            text: "Continue",
+            text: loading?"Authenticating...":"Continue",
             press: customerLogin,
           ),
         ],

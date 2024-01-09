@@ -61,7 +61,13 @@ class CustomBottomNavBar extends StatelessWidget {
                 onPressed: () {},
               ),
               IconButton(
-                icon: SvgPicture.asset("assets/icons/Cart Icon.svg"),
+                icon: Stack(children: [
+                  SvgPicture.asset("assets/icons/Cart Icon.svg", ),
+                  (cartitems.length > 0)?Padding(
+                    padding: const EdgeInsets.only(left:10.0),
+                    child: Text("${cartitems.length}", style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold),),
+                  ):SizedBox.shrink(),
+                  ],),
                 onPressed: () => (cartitems.isEmpty)
                     ? ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                         content: Text('No product found'),
